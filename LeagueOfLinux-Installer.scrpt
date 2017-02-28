@@ -1,0 +1,85 @@
+#!/usr/bin/env playonlinux-bash
+POL_Wine_DelOverrideDLL()
+{
+    # Delete override DLLs
+    cat << EOF > "$POL_USER_ROOT/tmp/del-override-dll.reg"
+REGEDIT4
+
+[HKEY_CURRENT_USER\\\\Software\\\\Wine\\\\DllOverrides]
+EOF
+
+    while test "$1" != ""
+    do
+        echo "\\"$1\\"=-" >> "$POL_USER_ROOT/tmp/del-override-dll.reg"
+        shift
+    done
+    POL_Debug_Message "Deleting overrides DLLs"
+    POL_SetupWindow_wait_next_signal "Please wait" "$TITLE"
+    POL_Wine regedit "$POL_USER_ROOT/tmp/del-override-dll.reg"
+}
+
+[ "$PLAYONLINUX" = "" ] && exit 0
+source "$PLAYONLINUX/lib/sources"
+
+
+ 
+POL_SetupWindow_Init
+
+username = "${USER}"
+
+#POL_SetupWindow_message "Debug : Userpath = $USER" "Debug"
+
+cd "$POL_System_TmpDir"
+
+POL_SetupWindow_message "I would like to thank all the users of Reddit for their help and feedback on the League of Linux matter.\n\nThanks to /u/Twiclo for making the subreddit\nThanks to /u/TheDreadedAndy for creating an on depth guide on the matter." "Thank to Reddit users!"
+
+POL_Wine_SelectPrefix "LeagueofLegendsS7"
+
+POL_Wine_PrefixCreate "2.1-staging"
+
+wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
+
+chmod +x winetricks
+
+WINEPREFIX=/home/$USER/.PlayOnLinux/wineprefix/LeagueofLegendsS7
+
+./winetricks -q vcrun2015 dx3d9
+
+POL_setupWindow_message "I'll get the install files for you and run them.\nNote that this installer will automatically put you in NA, meaning that you should change your server later.\n\nWhen the installer runs, be sure to untick 'Run League of legends'" "Notice"
+
+
+POL_Download "http://l3cdn.riotgames.com/Installer/SingleFileInstall/LeagueOfLegendsBaseNA.exe" "9d44b68bd02d7b5426556f64d86bbd16"
+
+POL_Wine "LeagueOfLegendsBaseNA.exe"
+
+cd ..
+
+
+#POL_Call POL_Function_OverrideDLL native d3dx9_24
+#POL_Call POL_Function_OverrideDLL native d3dx9_25
+#POL_Call POL_Function_OverrideDLL native d3dx9_26
+#POL_Call POL_Function_OverrideDLL native d3dx9_27
+#POL_Call POL_Function_OverrideDLL native d3dx9_28
+#POL_Call POL_Function_OverrideDLL native d3dx9_29
+#POL_Call POL_Function_OverrideDLL native d3dx9_30
+#POL_Call POL_Function_OverrideDLL native d3dx9_31
+#POL_Call POL_Function_OverrideDLL native d3dx9_32
+#POL_Call POL_Function_OverrideDLL native d3dx9_33
+#POL_Call POL_Function_OverrideDLL native d3dx9_34
+#POL_Call POL_Function_OverrideDLL native d3dx9_35
+#POL_Call POL_Function_OverrideDLL native d3dx9_36
+#POL_Call POL_Function_OverrideDLL native d3dx9_37
+#POL_Call POL_Function_OverrideDLL native d3dx9_38
+#POL_Call POL_Function_OverrideDLL native d3dx9_39
+#POL_Call POL_Function_OverrideDLL native d3dx9_40
+#POL_Call POL_Function_OverrideDLL native d3dx9_41
+#POL_Call POL_Function_OverrideDLL native d3dx9_42
+#POL_Call POL_Function_OverrideDLL native d3dx9_43
+#POL_Call POL_Function_OverrideDLL native,builtin msvcp140
+#POL_Call POL_Function_OverrideDLL native,builtin vcomp140
+#POL_Call POL_Function_OverrideDLL native,builtin vcruntime140
+
+
+
+POL_SetupWindow_Close
+exit
